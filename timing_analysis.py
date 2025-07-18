@@ -623,12 +623,12 @@ def plot_lower_outlier_timeseries(timing_data, output_file='lower_outlier_timese
     print(f"Lower outlier time series saved as {output_file}")
     plt.close()
 
-def process_timing_file(timing_file_path):
+def process_timing_file(timing_file_path, test_node_name):
     """
-    Process a single timing file and save results in results/{timing_filename}/
+    Process a single timing file and save results in results/{test_node_name}/{timing_filename}/
     """
     timing_filename = os.path.splitext(os.path.basename(timing_file_path))[0]
-    results_dir = os.path.join('results', timing_filename)
+    results_dir = os.path.join('results', test_node_name, timing_filename)
     os.makedirs(results_dir, exist_ok=True)
 
     # Parse timing data
@@ -668,21 +668,55 @@ def process_timing_file(timing_file_path):
     print(f"Analysis complete for {timing_filename}! Results in {results_dir}")
 
 def main():
-    """Main function to run the timing analysis for all files in 'timing' directory."""
-    timing_dir = 'timing'
+    """Main function to run the timing analysis for all subdirectories in 'execution-logs' directory."""
+    timing_dir = 'execution-logs'
+    results_dir = 'results'
+    
     if not os.path.exists(timing_dir):
         print(f"Timing directory '{timing_dir}' not found.")
         return
     
-    # Find all timing files
-    timing_files = [os.path.join(timing_dir, f) for f in os.listdir(timing_dir)
-                    if f.startswith('executor_timing_results_') and f.endswith('.txt')]
-    if not timing_files:
-        print(f"No timing files found in '{timing_dir}'.")
+    # Find all subdirectories in execution-logs directory (excluding .git and other hidden dirs)
+    execution_subdirs = [d for d in os.listdir(timing_dir) 
+                        if os.path.isdir(os.path.join(timing_dir, d)) and not d.startswith('.')]
+    
+    if not execution_subdirs:
+        print(f"No subdirectories found in '{timing_dir}'.")
         return
     
-    for timing_file in timing_files:
-        process_timing_file(timing_file)
+    # Check which test nodes already have results
+    existing_results = set()
+    if os.path.exists(results_dir):
+        existing_results = set(d for d in os.listdir(results_dir) 
+                              if os.path.isdir(os.path.join(results_dir, d)) and not d.startswith('.'))
+        print(f"Found existing results for: {sorted(existing_results)}")
+    
+    # Only process test nodes that don't have results yet
+    subdirs_to_process = [d for d in execution_subdirs if d not in existing_results]
+    
+    if not subdirs_to_process:
+        print("All test nodes already have results. No new processing needed.")
+        return
+    
+    print(f"Processing test nodes: {sorted(subdirs_to_process)}")
+    
+    for subdir in subdirs_to_process:
+        subdir_path = os.path.join(timing_dir, subdir)
+        print(f"\nProcessing test node: {subdir}")
+        
+        # Find all .txt files in subdirectory
+        txt_files = [f for f in os.listdir(subdir_path) 
+                     if f.endswith('.txt')]
+        
+        if not txt_files:
+            print(f"No .txt files found in '{subdir_path}'.")
+            continue
+        
+        # Process each .txt file
+        for txt_file in txt_files:
+            timing_file_path = os.path.join(subdir_path, txt_file)
+            print(f"  Processing file: {txt_file}")
+            process_timing_file(timing_file_path, subdir)
 
 if __name__ == "__main__":
     main() 
