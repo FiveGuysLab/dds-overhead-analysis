@@ -1,0 +1,40 @@
+EXECUTOR TIMING ANALYSIS REPORT
+==================================================
+
+Total measurements: 10,000
+
+TIMING STATISTICS
+--------------------
+Mean:           40.01 μs (     40013 ns)
+Median:         38.43 μs (     38433 ns)
+Standard Dev:   31.98 μs (     31982 ns)
+Minimum:        35.23 μs (     35233 ns)
+Maximum:        3175.34 μs (   3175340 ns)
+Q1 (25th %):    37.63 μs (     37633 ns)
+Q3 (75th %):    39.74 μs (     39745 ns)
+IQR:            2.11 μs (      2112 ns)
+
+PERCENTILES
+--------------------
+ 1th percentile:      36.29 μs (     36289 ns)
+ 5th percentile:      36.77 μs (     36769 ns)
+10th percentile:      37.06 μs (     37058 ns)
+25th percentile:      37.63 μs (     37633 ns)
+50th percentile:      38.43 μs (     38433 ns)
+75th percentile:      39.74 μs (     39745 ns)
+90th percentile:      42.18 μs (     42177 ns)
+95th percentile:      43.55 μs (     43553 ns)
+99th percentile:      67.43 μs (     67428 ns)
+
+OUTLIER ANALYSIS
+--------------------
+Lower bound (Q1 - 1.5*IQR): 34.47 μs (34465 ns)
+Upper bound (Q3 + 1.5*IQR): 42.91 μs (42913 ns)
+Number of outliers: 644 (6.44%)
+Outlier range: 42.91 - 3175.34 μs
+
+PERFORMANCE CATEGORIES
+-------------------------
+Fast (< Q1):       2,485 measurements ( 24.85%)
+Normal (Q1-Q3):     5,019 measurements ( 50.19%)
+Slow (> Q3):        2,496 measurements ( 24.96%)
